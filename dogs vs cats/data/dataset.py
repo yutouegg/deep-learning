@@ -16,7 +16,7 @@ class DogCat(data.Dataset):
         # train: data/train/cat.10004.jpg
         # 根据不同的数据集划分imgs
         if self.test:
-            imgs = sorted(imgs,key=lambda x: int(x.split('.')[-2].split('/')[-1]))
+            imgs = sorted(imgs,key=lambda x: int(x.split('.')[-2].split('\\')[-1]))
         else:
             imgs = sorted(imgs,key=lambda x: int(x.split('.')[-2]))
 
@@ -56,7 +56,7 @@ class DogCat(data.Dataset):
         img_path = self.imgs[index]
 
         if self.test:
-            label = int(self.imgs[index].split('.')[-2].split('/')[-1])
+            label = int(self.imgs[index].split('.')[-2].split('\\')[-1])
         else:
             label = 1 if 'dog' in self.imgs[index].split('/')[-1] else 0
 

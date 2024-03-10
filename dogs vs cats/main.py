@@ -7,7 +7,8 @@ import pandas as pd
 from torch.utils.data import DataLoader
 import torch.optim as optim
 
-max_epoch = 128
+max_epoch = 2
+
 batch_size = 32
 lr = 0.00005
 weight_decay = 0
@@ -60,33 +61,36 @@ def train():
 def test():
     net = resnet.net
     net.load_state_dict(torch.load('model.pth'))
-    #测试数据
+    # 测试数据
     test_data = DogCat('data/test',test=True)
     test_load = DataLoader(test_data,batch_size = batch_size,shuffle=False)
 
-    #结果保存
-    df = pd.DataFrame()
+    # 结果保存
     id = []
     label = []
 
     for i , (data,path) in enumerate(test_load):
-        id.append(path.numpy())
+        for ii in path:
+            id.append(ii.numpy())
         input = data
         if USE_CUDA:
             input = input.cuda()
         predict = net(input)
         _,pre = torch.max(predict,1)
-        if pre == 1:
-            label.append('dog')
-        else:
-            label.append('cat')
+        for item in pre:
+            if item == 1:
+                label.append('dog')
+            else:
+                label.append('cat')
 
     dict = {'id':id,'label':label}
+    df = pd.DataFrame(dict)
     df.to_csv('result/result.csv')
 
 
 if __name__ == '__main__':
     train()
     test()
-
+    df = pd.read_csv('result/result.csv')
+    print(df.head())
 
